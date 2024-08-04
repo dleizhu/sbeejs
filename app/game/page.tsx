@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import LettersRow from '../components/LettersRow';
 import GameInput from '../components/GameInput';
+import useGameInput from './useGameInput';
 
 export interface GamePuzzle {
   letters: string[];
@@ -23,13 +24,22 @@ export default function Page() {
     }
   }, []);
 
+  const { inputValue, setInputValue, handleLetterClick, handleSubmit } =
+    useGameInput();
+
   if (!gamePuzzle) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="flex justify-center items-center h-screen bg-base-100">
-      <GameInput gamePuzzle={gamePuzzle} />
+      <GameInput
+        gamePuzzle={gamePuzzle}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        handleLetterClick={handleLetterClick}
+        handleSubmit={handleSubmit}
+      />
     </div>
   );
 }
