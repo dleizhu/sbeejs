@@ -8,6 +8,7 @@ interface GameInputProps {
   setInputValue: (value: string) => void;
   handleLetterClick: (letter: string) => void;
   handleSubmit: () => void;
+  handleKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export default function GameInput({
@@ -16,6 +17,7 @@ export default function GameInput({
   setInputValue,
   handleLetterClick,
   handleSubmit,
+  handleKeyDown,
 }: GameInputProps): JSX.Element {
   return (
     <div className="flex flex-col bg-base-100 items-center px-2">
@@ -26,6 +28,7 @@ export default function GameInput({
           className="input input-bordered flex-grow m-2"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
         <button className="btn btn-accent m-2" onClick={handleSubmit}>
           Submit

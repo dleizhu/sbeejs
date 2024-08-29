@@ -38,6 +38,13 @@ export default function Page() {
         setScore((prevScore) => prevScore + wordScore);
       }
     }
+    setInputValue(''); // Clear the input box after submission
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
   };
 
   useEffect(() => {
@@ -76,6 +83,7 @@ export default function Page() {
         setInputValue={setInputValue}
         handleLetterClick={handleLetterClick}
         handleSubmit={handleSubmit}
+        handleKeyDown={handleKeyDown}
       />
     </div>
   );
