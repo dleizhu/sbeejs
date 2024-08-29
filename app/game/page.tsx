@@ -17,9 +17,15 @@ export default function Page() {
   const [score, setScore] = useState<number>(0);
   const [submittedWords, setSubmittedWords] = useState(new Set());
   const [inputValue, setInputValue] = useState<string>('');
+  const [totalPossibleScore, setTotalPossibleScore] = useState<number>(0);
 
   const handleLetterClick = (letter: string) => {
     setInputValue((prevValue) => prevValue + letter);
+  };
+
+  const calculateWordScore = (word: string, isPangram: boolean) => {
+    if (word.length < 4) return 0;
+    return isPangram ? word.length + 7 : word.length;
   };
 
   const handleSubmit = () => {
@@ -28,9 +34,7 @@ export default function Page() {
       const solution = gamePuzzle.solutions.find((s) => s.word === inputValue);
       if (solution) {
         setSubmittedWords((prev) => new Set(prev).add(inputValue));
-        const wordScore = solution.isPangram
-          ? inputValue.length + 7
-          : inputValue.length;
+        const wordScore = calculateWordScore(solution.word, solution.isPangram);
         setScore((prevScore) => prevScore + wordScore);
       }
     }
@@ -40,7 +44,19 @@ export default function Page() {
     const storedPuzzle = sessionStorage.getItem('gamePuzzle');
     if (storedPuzzle) {
       try {
-        setGamePuzzle(JSON.parse(storedPuzzle));
+        const puzzle = JSON.parse(storedPuzzle);
+        setGamePuzzle(puzzle);
+        // Calculate total possible score
+        const totalScore = puzzle.solutions.reduce(
+          (total: number, solution: { word: string; isPangram: boolean }) => {
+            return (
+              total + calculateWordScore(solution.word, solution.isPangram)
+            );
+          },
+          0
+        );
+        console.log(`total possible score = ${totalPossibleScore}`);
+        setTotalPossibleScore(totalScore);
       } catch (error) {
         console.error('Failed to parse game puzzle from sessionStorage', error);
       }
@@ -53,7 +69,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-base-100">
-      <Scoreboard score={score} />
+      <Scoreboard score={score} totalPossibleScore={totalPossibleScore} />
       <GameInput
         gamePuzzle={gamePuzzle}
         inputValue={inputValue}
