@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import puppeteer from 'puppeteer';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -12,9 +15,19 @@ export async function GET(request: Request) {
     );
   }
 
-  let browser = null;
+  let browser = await puppeteer.launch({
+    args: [
+      '--disable-setuid-sandbox',
+      '--no-sandbox',
+      '--single-process',
+      '--no-zygote',
+    ],
+    executablePath:
+      process.env.NODE_ENV === 'production'
+        ? process.env.PUPPETEER_EXECUTABLE_PATH
+        : puppeteer.executablePath(),
+  });
   try {
-    browser = await puppeteer.launch();
     console.log('launced browser');
 
     const page = await browser.newPage();
