@@ -26,9 +26,7 @@ export default function Scoreboard({
       className={`card w-96 shadow-xl mb-8 transition-colors duration-300 bg-base-200`}
     >
       <div className="card-body items-center text-center">
-        <h2 className="card-title text-3xl font-bold text-primary">
-          Scoreboard
-        </h2>
+        <h2 className="card-title text-3xl font-bold text-primary">Score</h2>
         <div className="stat-value text-5xl text-secondary">{score}</div>
         <p className="text-base-content opacity-70">Points</p>
         <div className="mt-4 w-full">

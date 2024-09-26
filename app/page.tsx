@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import DatePicker from './components/DatePicker';
 import { useRouter } from 'next/navigation';
 
@@ -28,8 +29,10 @@ async function getPuzzle(puzzleNum: number) {
 
 export default function Home() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const processDate = async (date: string) => {
+    setIsLoading(true);
     try {
       const puzzleNum = convertDateToPuzzleNumber(date);
       const puzzle = await getPuzzle(puzzleNum);
@@ -42,19 +45,30 @@ export default function Home() {
       // redirect to game page
       router.push(`/game?date=${date}`);
     } catch (error) {
-      throw new Error(`error processing date ${date}`);
+      console.error(
+        `Error processing date: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div
-      id="main-container"
-      className="flex justify-center items-center h-screen bg-base-100"
-    >
-      <DatePicker
-        title="Choose your puzzle date!"
-        submitFunction={processDate}
-      ></DatePicker>
+    <div className="flex items-center justify-center min-h-screen bg-base-100 p-4">
+      <div className="relative">
+        <DatePicker
+          title="Choose your puzzle date!"
+          submitFunction={processDate}
+        />
+        {isLoading && (
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 flex flex-col items-center">
+            <span className="loading loading-spinner loading-lg"></span>
+            <p className="mt-2 text-lg">Loading puzzle...</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
