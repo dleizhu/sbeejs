@@ -18,6 +18,7 @@ export default function Page() {
   const [inputValue, setInputValue] = useState<string>('');
   const [totalPossibleScore, setTotalPossibleScore] = useState<number>(0);
   const [message, setMessage] = useState<string>('');
+  const [alertColor, setAlertColor] = useState<string>('');
 
   const handleLetterClick = (letter: string) => {
     setInputValue((prevValue) => prevValue + letter);
@@ -31,6 +32,7 @@ export default function Page() {
   const handleSubmit = () => {
     console.log(`submitted ${inputValue}`);
     if (gamePuzzle) {
+      setAlertColor('alert-error');
       if (submittedWords.has(inputValue)) {
         setMessage(`${inputValue} has already been submitted`);
       } else {
@@ -38,13 +40,18 @@ export default function Page() {
           (s) => s.word === inputValue
         );
         if (solution) {
+          setAlertColor('alert-success');
           setSubmittedWords((prev) => new Set(prev).add(inputValue));
           const wordScore = calculateWordScore(
             solution.word,
             solution.isPangram
           );
           setScore((prevScore) => prevScore + wordScore);
-          setMessage(''); // Clear any previous message
+          if (solution.isPangram) {
+            setMessage(`Pangram! +${wordScore} points!`);
+          } else {
+            setMessage(`+${wordScore} points!`);
+          }
         } else {
           setMessage(`${inputValue} is not a valid word`);
         }
@@ -53,12 +60,14 @@ export default function Page() {
     setInputValue(''); // Clear the input box after submission
   };
 
+  // handle enter keypress
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSubmit();
     }
   };
 
+  // grab puzzle from session storage
   useEffect(() => {
     const storedPuzzle = sessionStorage.getItem('gamePuzzle');
     if (storedPuzzle) {
@@ -81,14 +90,34 @@ export default function Page() {
     }
   }, []);
 
+  // toast timeout
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage(''); // Clear the message after 3 seconds
+      }, 3000);
+
+      return () => clearTimeout(timer); // Cleanup the timer on unmount
+    }
+  }, [message]);
+
   if (!gamePuzzle) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-base-100">
+      {message && (
+        <div className="toast toast-top toast-center">
+          <div
+            className={`alert ${alertColor} w-auto flex justify-center items-center`}
+          >
+            <span className="text-center">{message}</span>
+          </div>
+        </div>
+      )}
+
       <Scoreboard score={score} totalPossibleScore={totalPossibleScore} />
-      {message && <div className="text-error m-0 p-0">{message}</div>}
       <GameInput
         gamePuzzle={gamePuzzle}
         inputValue={inputValue}

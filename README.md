@@ -1,5 +1,6 @@
 # sbeejs
 Try it [here](https://sbeejs.onrender.com/)!
+Note: The first load can take up to a minute to cold start since Render spins down the web service after inactivity.
 
 ## Background
 I'm a big fan of NYT's Spelling Bee game, but without a subscription, the game cuts you off from hitting high scores.

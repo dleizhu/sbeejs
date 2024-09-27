@@ -63,9 +63,9 @@ export default function Home() {
           submitFunction={processDate}
         />
         {isLoading && (
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 flex flex-col items-center">
-            <span className="loading loading-spinner loading-lg"></span>
-            <p className="mt-2 text-lg">Loading puzzle...</p>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 flex flex-col items-center">
+            <p className="mt-2 text-lg">loading puzzle</p>
+            <span className="loading loading-dots loading-md"></span>
           </div>
         )}
       </div>
